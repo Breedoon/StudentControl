@@ -6,9 +6,9 @@ jsglue = JSGlue(app)
 
 @app.route('/')
 def index():
-    if session.__contains__('user_id'):
+    # if session.__contains__('user_id'):
         return render_template('dashboard.html')
-    return render_template('login.html')
+    # return render_template('login.html')
 
 
 if __name__ == '__main__':
