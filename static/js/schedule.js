@@ -1,7 +1,6 @@
 function test() {
 	alert("working");
 }
-
 function ab() {
 	document.getElementById("day").innerHTML = "A/B Day Schedule";
 	document.getElementById("abButton").style.color = "white";
@@ -18,7 +17,7 @@ function ab() {
 	document.getElementById("abDay").style.top = "400px";
 	document.getElementById("cDay").style.top = "1350px";
 }
-
+// !!!!!!
 function c() {
 	document.getElementById("day").innerHTML = "C Day Schedule";
 	document.getElementById("abButton").style.color = "black";
@@ -35,7 +34,6 @@ function c() {
 	document.getElementById("cDay").style.top = "350px";
 	document.getElementById("abDay").style.top = "1400px";
 }
-
 function p() {
 	document.getElementById("day").innerHTML = "Prep-Rally Schedule";
 	document.getElementById("abButton").style.color = "black";
