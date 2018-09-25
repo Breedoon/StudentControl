@@ -5,18 +5,28 @@
     /*==================================================================
     [ Validate ]*/
     var input = $('.validate-input .input100');
-
+    var user_id = null, password = null;
+    $('.validate-form').submit(function (e) {
+        e.preventDefault();
+    });
     $('.validate-form').on('submit', function () {
         var check = true;
-
         for (var i = 0; i < input.length; i++) {
             if (validate(input[i]) == false) {
                 showValidate(input[i]);
                 check = false;
             }
         }
-
-        return check;
+        if (check) {
+            $.ajax({
+                url: Flask.url_for('login'),
+                data: {"user_id": user_id, "password": password},
+                type: "POST",
+                success: function (data) {
+                    window.location = data;
+                }
+            })
+        }
     });
 
 
@@ -27,12 +37,14 @@
     });
 
     function validate(input) {
-        if ($(input).attr('type') == 'email' || $(input).attr('name') == 'email') {
+        if ($(input).attr('type') == 'text' || $(input).attr('user_id') == 'email') {
+            user_id = $(input).val().trim();
             if ($(input).val().trim().match(/^[0-9]{7}$/) == null) {
                 return false;
             }
         }
         else {
+            password = $(input).val().trim();
             if ($(input).val().trim() == '') {
                 return false;
             }
