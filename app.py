@@ -44,11 +44,21 @@ def login():
         return render_template('login.html')
 
 
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
+
+
+@app.route('/search')
+def search():
+    return render_template('search.html')
+
+
 @app.route('/')
 def index():
-    if session.__contains__('user_id'):
-        return render_template('dashboard.html')
-    return redirect('/login')
+    if not session.__contains__('user_id'):
+        return redirect('/login')
+    return redirect('/dashboard')
 
 
 if __name__ == '__main__':
