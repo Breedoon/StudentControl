@@ -2,17 +2,18 @@
 {% block main %}
     <script src="../static/js/search.js"></script>
     <!-- Form Name -->
-    <fieldset>
-        <!-- Text input-->
-        <div class="form-group">
-            <label class="col-md-4 control-label" for="student_id">By Student ID</label>
-            <div class="col-md-4">
-                <input id="student_id" name="student_id" type="text" placeholder="Student ID"
-                       class="form-control input-md">
+    <div id="inner_container">
+        <fieldset>
+            <!-- Text input-->
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="student_id">By Student ID</label>
+                <div class="col-md-4">
+                    <input id="student_id" name="student_id" type="text" placeholder="Student ID"
+                           class="form-control input-md">
+                </div>
+                <button onclick="id_search($('#student_id').value)" id="search_id" name="search_id" class="btn btn-danger" style="margin-left: 1em;">Search</button>
             </div>
-                <button id="search_id" name="search_id" class="btn btn-danger" style="margin-left: 1em;">Search</button>
-        </div>
-        <!-- Text input-->
+            <!-- Text input-->
             <div class="form-group">
                 <label class="col-md-4 control-label" for="first_name">By Name</label>
                 <div class="col-md-4">
@@ -24,9 +25,10 @@
 
                 </div>
 
-                    <button id="search_name" name="search_name" class="btn btn-danger" style="margin-left: 1em;">Search</button>
+                <button onclick="name_search($('#first_name').value, $('#last_name').value)" id="search_name" name="search_name" class="btn btn-danger" style="margin-left: 1em;">Search
+                </button>
             </div>
 
         </fieldset>
-
+    </div>
 {% endblock %}

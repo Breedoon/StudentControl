@@ -49,9 +49,17 @@ def dashboard():
     return render_template('dashboard.html')
 
 
-@app.route('/search')
+@app.route('/search', methods=["GET", "POST"])
 def search():
-    return render_template('search.html')
+    if request.method == "POST":
+        if request.form.__contains__("user_id"):
+            user_id = request.form.get("user_id")
+        else:
+            first_name = request.form.get("first_name")
+            last_name = request.form.get("last_name")
+
+    else:
+        return render_template('search.html')
 
 
 @app.route('/')
