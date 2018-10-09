@@ -1,12 +1,10 @@
-var prev_doc = "";
-
 function id_search(user_id) { // TODO: validity of id
     $.ajax({
         url: Flask.url_for('search'),
         data: {"user_id": user_id},
         type: "POST",
         success: function (data) {
-            prev_doc = $('#inner_container');
+            $('#inner_container').html(data)
         }
 
     })
