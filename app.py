@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from helper import apology, db_init, dict_factory
+from helper import apology, db_init, dict_factory, create_users_table
 from flask import Flask, redirect, render_template, request, session, url_for
 from flask_jsglue import JSGlue
 
@@ -27,7 +27,7 @@ def login():
         elif len(password) < 6:
             return apology(title="INVALID PASSWORD", message="Your password must be longer than 5 characters")
         db = db_init()
-        stored_user = db.execute("SELECT * FROM users WHERE id = :id", {'id': user_id}).fetchone()
+        stored_user = db.execute("SELECT * FROM users WHERE id LIKE :id", {'id': user_id}).fetchone()
 
         if stored_user is None:
             return apology(title="INVALID ID", message="Wrong id" + user_id)
@@ -37,7 +37,8 @@ def login():
 
         session["user_id"] = stored_user['id']
         session["user_permission"] = stored_user['permission']
-        session["user_name"] = stored_user['name']
+        session["user_first_name"] = stored_user['first_name']
+        session["user_last_name"] = stored_user['last_name']
         return url_for("index")
 
     else:
@@ -52,14 +53,19 @@ def dashboard():
 @app.route('/search', methods=["GET", "POST"])  # TODO: //Login required
 def search():
     if request.method == "POST":
+        session['user_permission'] = 2  # TODO: REMOVE
+        db = db_init()
         if request.form.__contains__("user_id"):
             user_id = request.form.get("user_id")
-            db = db_init()
-            stored_users = db.execute("SELECT * FROM users WHERE id = :id AND permission < :perm", {'id': user_id, 'perm': session['user_permission']}).fetchall()
-            return
+            return create_users_table(db.execute(
+                "SELECT * FROM users WHERE id LIKE :id AND permission < :perm",
+                {'id': user_id, 'perm': session['user_permission']}).fetchall())
         else:
             first_name = request.form.get("first_name")
             last_name = request.form.get("last_name")
+            return create_users_table(db.execute(
+                "SELECT * FROM users WHERE (first_name LIKE :first_name OR last_name LIKE :last_name) AND permission < :perm",
+                {'first_name': first_name, 'last_name': last_name, 'perm': session['user_permission']}).fetchall())
 
     else:
         return render_template('search.html')

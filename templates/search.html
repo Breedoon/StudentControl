@@ -11,7 +11,7 @@
                     <input id="student_id" name="student_id" type="text" placeholder="Student ID"
                            class="form-control input-md">
                 </div>
-                <button onclick="id_search($('#student_id').value)" id="search_id" name="search_id" class="btn btn-danger" style="margin-left: 1em;">Search</button>
+                <button onclick="id_search($('#student_id').val())" id="search_id" name="search_id" class="btn btn-danger" style="margin-left: 1em;">Search</button>
             </div>
             <!-- Text input-->
             <div class="form-group">
@@ -25,7 +25,7 @@
 
                 </div>
 
-                <button onclick="name_search($('#first_name').value, $('#last_name').value)" id="search_name" name="search_name" class="btn btn-danger" style="margin-left: 1em;">Search
+                <button onclick="name_search($('#first_name').val(), $('#last_name').val())" id="search_name" name="search_name" class="btn btn-danger" style="margin-left: 1em;">Search
                 </button>
             </div>
 

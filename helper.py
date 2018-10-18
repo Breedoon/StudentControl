@@ -1,6 +1,6 @@
 import sqlite3
 
-from flask import url_for
+from flask import url_for, render_template
 
 
 def apology(header="ERROR", title="404 — NOTHING WAS FOUND",
@@ -21,5 +21,16 @@ def db_init():
     db.row_factory = dict_factory
     return db
 
-def create_table(users):
-    return """"""
+
+def create_users_table(users):
+    table = dict()
+    table['head'] = ["Name", "ID", "Type", "Points", "Current assignment"]
+    table['rows'] = []
+    for user in users:
+        type = "Student"
+        if user['permission'] is 1:
+            type = 'Teacher'
+        elif user['permission'] is 2:
+            type = "Admin"
+        table['rows'].append([user['first_name'] + " " + user['last_name'], user['id'], type, user['points'], user['assigned_to']])
+    return render_template("table.html", table=table)
