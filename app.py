@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from helper import apology, db_init, dict_factory, create_users_table
+from helper import apology, db_init, dict_factory, create_users_table, get_user_type
 from flask import Flask, redirect, render_template, request, session, url_for
 from flask_jsglue import JSGlue
 
@@ -23,7 +23,7 @@ def login():
         user_id = request.form.get("user_id")
         password = request.form.get("password")
         if not user_id or user_id.__len__() != 7 or not user_id.isdigit():
-            return apology(title="INVALID ID", message="Your id must only contain 7 digits")
+            return apology(title="INVALID ID", message="Your id must contain only 7 digits")
         elif len(password) < 6:
             return apology(title="INVALID PASSWORD", message="Your password must be longer than 5 characters")
         db = db_init()
@@ -75,6 +75,20 @@ def search():
 def p404():
     return render_template('404.html', header=request.args.get("header"), title=request.args.get("title"), message=request.args.get("message"))
 
+
+@app.route('/profile')
+def profile():
+    session['user_id'] = 1000000  # TODO: REMOVE
+    session['user_permission'] = 2  # TODO: REMOVE
+    if not request.args.__contains__("user_id"):
+        user_id = session['user_id']
+    else:
+        user_id = request.args.get('user_id')
+    db = db_init()
+    stored_user = db.execute("SELECT * FROM users WHERE id LIKE :id", {'id': user_id}).fetchone()
+    stored_user['position'] = get_user_type(stored_user['permission'])
+    disabled = ('disabled', '')[session['user_permission'] > stored_user['permission']]
+    return render_template("user.html", user=stored_user, disabled=disabled)
 
 if __name__ == '__main__':
     app.run()

@@ -27,10 +27,15 @@ def create_users_table(users):
     table['head'] = ["Name", "ID", "Type", "Points", "Current assignment"]
     table['rows'] = []
     for user in users:
-        type = "Student"
-        if user['permission'] is 1:
-            type = 'Teacher'
-        elif user['permission'] is 2:
-            type = "Admin"
+        type = get_user_type(user['permission'])
         table['rows'].append([user['first_name'] + " " + user['last_name'], user['id'], type, user['points'], user['assigned_to']])
     return render_template("table.html", table=table)
+
+
+def get_user_type(permission_level):
+    type = "Student"
+    if permission_level is 1:
+        type = 'Teacher'
+    elif permission_level is 2:
+        type = "Admin"
+    return type

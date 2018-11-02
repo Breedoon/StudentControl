@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% block main %}
+    <script src="../static/js/jquery-1.10.2.js" type="text/javascript"></script>
     <script src="../static/js/search.js"></script>
     <!-- Form Name -->
     <div id="inner_container">
@@ -11,7 +12,9 @@
                     <input id="student_id" name="student_id" type="text" placeholder="Student ID"
                            class="form-control input-md">
                 </div>
-                <button onclick="id_search($('#student_id').val())" id="search_id" name="search_id" class="btn btn-danger" style="margin-left: 1em;">Search</button>
+                <button onclick="id_search($('#student_id').val())" id="search_id" name="search_id"
+                        class="btn btn-danger" style="margin-left: 1em;">Search
+                </button>
             </div>
             <!-- Text input-->
             <div class="form-group">
@@ -25,10 +28,12 @@
 
                 </div>
 
-                <button onclick="name_search($('#first_name').val(), $('#last_name').val())" id="search_name" name="search_name" class="btn btn-danger" style="margin-left: 1em;">Search
+                <button onclick="name_search($('#first_name').val(), $('#last_name').val())" id="search_name"
+                        name="search_name" class="btn btn-danger" style="margin-left: 1em;">Search
                 </button>
             </div>
 
         </fieldset>
     </div>
 {% endblock %}
+{% block active_search %}'active'{% endblock %}

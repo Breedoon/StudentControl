@@ -22,3 +22,34 @@ function name_search(first, last) { // TODO: validity of name
         }
     })
 }
+
+function name_submit(e) {
+    if (!e) e = window.event;
+    var keyCode = e.keyCode || e.which;
+    if (keyCode === '13') {
+        name_search($('#first_name').val(), $('#last_name').val());
+        return false;
+    }
+}
+
+function id_submit(e) {
+    console.log("KEYUP");
+    if (!e) e = window.event;
+    var keyCode = e.keyCode || e.which;
+    if (keyCode === '13') {
+        id_search($('#student_id').val());
+        return false;
+    }
+}
+
+(function ($) {
+    $('#first_name').keyup(name_submit);
+    $('#last_name').keyup(name_submit);
+    $('#student_id').keyup(id_submit);
+    $("#search_id").on('click',(function () {
+        id_search($('#student_id').val());
+    }));
+    $("#search_name").click(function () {
+        name_search($('#first_name').val(), $('#last_name').val());
+    });
+})(jQuery);
