@@ -58,7 +58,7 @@ def search():
         if request.form.__contains__("user_id"):
             user_id = request.form.get("user_id")
             return create_users_table(db.execute(
-                "SELECT * FROM users WHERE id LIKE :id AND permission < :perm",
+                "SELECT * FROM users WHERE id IS :id AND permission < :perm",
                 {'id': user_id, 'perm': session['user_permission']}).fetchall())
         else:
             first_name = request.form.get("first_name")
@@ -73,22 +73,44 @@ def search():
 
 @app.route('/404')
 def p404():
-    return render_template('404.html', header=request.args.get("header"), title=request.args.get("title"), message=request.args.get("message"))
+    return render_template('404.html', header=request.args.get("header"), title=request.args.get("title"),
+                           message=request.args.get("message"))
 
 
-@app.route('/profile')
+@app.route('/profile', methods=["GET", "POST"])
 def profile():
     session['user_id'] = 1000000  # TODO: REMOVE
     session['user_permission'] = 2  # TODO: REMOVE
-    if not request.args.__contains__("user_id"):
-        user_id = session['user_id']
+    if request.method == "POST":
+        if request.args.__contains__("new_user_id"):
+            user_id = session['user_id']
+            new_user_id = request.args.get('new_user_id')
+            first_name = request.args.get('first_name')
+            last_name = request.args.get('last_name')
+            db = db_init()
+            stored_user = db.execute("SELECT * FROM users WHERE id IS :id", {'id': user_id}).fetchone()
+            if not stored_user['premission'] < session['user_permission']:
+                raise Exception('Permission Error')
+            db.execute("UPDATE users SET first_name = :first_name, last_name = :last_name, id = :new_user_id "
+                       "WHERE id = :user_id", {'first_name': first_name, 'last_name': last_name, 'new_user_id': new_user_id,
+                        'id': user_id})
+            return 0
+        else:
+            pass
     else:
-        user_id = request.args.get('user_id')
-    db = db_init()
-    stored_user = db.execute("SELECT * FROM users WHERE id LIKE :id", {'id': user_id}).fetchone()
-    stored_user['position'] = get_user_type(stored_user['permission'])
-    disabled = ('disabled', '')[session['user_permission'] > stored_user['permission']]
-    return render_template("user.html", user=stored_user, disabled=disabled)
+        if not request.args.__contains__("user_id"):
+            user_id = session['user_id']
+        else:
+            user_id = request.args.get('user_id')
+        db = db_init()
+        stored_user = db.execute("SELECT * FROM users WHERE id IS :id", {'id': user_id}).fetchone()
+        if stored_user is None:
+            stored_user = db.execute("SELECT * FROM users WHERE id IS :id", {'id': session['user_id']}).fetchone()
+        stored_user['position'] = get_user_type(stored_user['permission'])
+        disabled = ('disabled', '')[session['user_permission'] > stored_user['permission']]
+        return render_template("user.html", user=stored_user, disabled=disabled)
+
+
 
 if __name__ == '__main__':
     app.run()

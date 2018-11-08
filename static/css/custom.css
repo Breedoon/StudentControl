@@ -1,0 +1,5 @@
+.selected:hover {
+    cursor: pointer;
+    color: #EB5E28;
+    transition: color 0.1s ease 0s;
+}

@@ -1,7 +1,7 @@
 <div class="card">
     <div class="header">
         <h4 class="title"></h4>
-        <p onclick="location.reload();" style="cursor: pointer;" class="category"><i class="ti-arrow-left"></i> Back
+        <p onclick="location.reload();" class="category selected"><i class="ti-arrow-left"></i> Back
         </p>
     </div>
     <div class="content table-responsive table-full-width">
@@ -14,7 +14,7 @@
             </thead>
             <tbody>
             {% for row in table['rows'] %}
-                <tr onclick="window.location.href = {{ url_for('profile', user_id = row[1]) }};" >
+                <tr onclick="profile({{ row[1] }})" class="selected">
                     {% for coloumn in row %}
                         <td> {{ coloumn }} </td>
                     {% endfor %}

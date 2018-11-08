@@ -1,3 +1,8 @@
+function profile(id) {
+    console.log("FUNC");
+    window.location.href = Flask.url_for('profile', {'user_id': id});
+}
+
 function id_search(user_id) { // TODO: validity of id
     $.ajax({
         url: Flask.url_for('search'),
@@ -11,9 +16,83 @@ function id_search(user_id) { // TODO: validity of id
     })
 }
 
+function change_profile(id, new_id, first, last) {
+    $.ajax({
+        url: Flask.url_for('profile'),
+        data: {"user_id": id, "new_user_id": new_id, "first_name": first, 'last_name': last},
+        type: "POST",
+        success: function (data) {
+            if (data === 0) {
+                $.notify({
+                    icon: "ti-check",
+                    message: "Profile updated"
+
+                }, {
+                    type: type['success'],
+                    timer: 3000,
+                    placement: {
+                        from: 'top',
+                        align: 'center'
+                    }
+                });
+            } else {
+                $.notify({
+                    icon: "ti-na",
+                    message: "<b>Error</b> — cannot update the profile"
+
+                }, {
+                    type: type['danger'],
+                    timer: 3000,
+                    placement: {
+                        from: 'top',
+                        align: 'center'
+                    }
+                });
+            }
+        }
+    })
+}
+
+function change_profile(id, new_id, first, last) {
+    $.ajax({
+        url: Flask.url_for('profile'),
+        data: {"user_id": id, "new_user_id": new_id, "first_name": first, 'last_name': last},
+        type: "POST",
+        success: function (data) {
+            if (data === 0) {
+                $.notify({
+                    icon: "ti-check",
+                    message: "Profile updated"
+
+                }, {
+                    type: type['success'],
+                    timer: 3000,
+                    placement: {
+                        from: 'top',
+                        align: 'center'
+                    }
+                });
+            } else {
+                $.notify({
+                    icon: "ti-na",
+                    message: "<b>Error</b> — cannot update the profile"
+
+                }, {
+                    type: type['danger'],
+                    timer: 3000,
+                    placement: {
+                        from: 'top',
+                        align: 'center'
+                    }
+                });
+            }
+        }
+    })
+}
+
 function name_search(first, last) { // TODO: validity of name
     $.ajax({
-        url: Flask.url_for('search'),
+        url: Flask.url_for('user'),
         data: {"first_name": first, 'last_name': last},
         type: "POST",
         success: function (data) {
@@ -46,7 +125,7 @@ function id_submit(e) {
     $('#first_name').keyup(name_submit);
     $('#last_name').keyup(name_submit);
     $('#student_id').keyup(id_submit);
-    $("#search_id").on('click',(function () {
+    $("#search_id").on('click', (function () {
         id_search($('#student_id').val());
     }));
     $("#search_name").click(function () {

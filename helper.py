@@ -28,7 +28,7 @@ def create_users_table(users):
     table['rows'] = []
     for user in users:
         type = get_user_type(user['permission'])
-        table['rows'].append([user['first_name'] + " " + user['last_name'], user['id'], type, user['points'], user['assigned_to']])
+        table['rows'].append([user['first_name'] + " " + user['last_name'], user['id'], type, user['points'], user['assignment']])
     return render_template("table.html", table=table)
 
 
