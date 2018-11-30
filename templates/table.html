@@ -14,7 +14,7 @@
             </thead>
             <tbody>
             {% for row in table['rows'] %}
-                <tr onclick="profile({{ row[1] }})" class="selected">
+                <tr onclick="window.location = Flask.url_for('profile', {'id': {{ row[1] }}});" class="selected">
                     {% for coloumn in row %}
                         <td> {{ coloumn }} </td>
                     {% endfor %}

@@ -1,6 +1,5 @@
 import os
-import sqlite3
-from helper import apology, db_init, dict_factory, create_users_table, get_user_type
+from helper import apology, db_init, dict_factory, create_users_table, get_user_position, check_assignment
 from flask import Flask, redirect, render_template, request, session, url_for
 from flask_jsglue import JSGlue
 
@@ -82,33 +81,57 @@ def profile():
     session['user_id'] = 1000000  # TODO: REMOVE
     session['user_permission'] = 2  # TODO: REMOVE
     if request.method == "POST":
-        if request.args.__contains__("new_user_id"):
-            user_id = session['user_id']
-            new_user_id = request.args.get('new_user_id')
-            first_name = request.args.get('first_name')
-            last_name = request.args.get('last_name')
+        try:
+            old_user_id = int(request.form.get('old_user_id'))
+            new_user_id = int(request.form.get('new_user_id'))
+            first_name = request.form.get('first_name')
+            last_name = request.form.get('last_name')
             db = db_init()
-            stored_user = db.execute("SELECT * FROM users WHERE id IS :id", {'id': user_id}).fetchone()
-            if not stored_user['premission'] < session['user_permission']:
+            stored_user = db.execute("SELECT * FROM users WHERE id IS :id", {'id': old_user_id}).fetchone()
+            if not stored_user['permission'] < session['user_permission']:
                 raise Exception('Permission Error')
             db.execute("UPDATE users SET first_name = :first_name, last_name = :last_name, id = :new_user_id "
-                       "WHERE id = :user_id", {'first_name': first_name, 'last_name': last_name, 'new_user_id': new_user_id,
-                        'id': user_id})
-            return 0
-        else:
-            pass
+                       "WHERE id = :old_user_id", {'first_name': first_name, 'last_name': last_name,
+                                                   'new_user_id': new_user_id, 'old_user_id': old_user_id})
+            db.commit()
+            return 'success'
+        except:
+            return 'fail'
+
     else:
-        if not request.args.__contains__("user_id"):
+        if not request.args.__contains__("id"):
             user_id = session['user_id']
         else:
-            user_id = request.args.get('user_id')
+            user_id = request.args.get('id')
         db = db_init()
         stored_user = db.execute("SELECT * FROM users WHERE id IS :id", {'id': user_id}).fetchone()
         if stored_user is None:
             stored_user = db.execute("SELECT * FROM users WHERE id IS :id", {'id': session['user_id']}).fetchone()
-        stored_user['position'] = get_user_type(stored_user['permission'])
+        stored_user['position'] = get_user_position(stored_user['permission'])
         disabled = ('disabled', '')[session['user_permission'] > stored_user['permission']]
         return render_template("user.html", user=stored_user, disabled=disabled)
+
+
+@app.route('/points', methods=["POST"])
+def points():
+    session['user_id'] = 1000000  # TODO: REMOVE
+    session['user_permission'] = 2  # TODO: REMOVE
+    try:
+        to_user_id = int(request.form.get('to_user'))
+        added_points = int(request.form.get('added_points'))
+        set_assignment = request.form.get('assignment')
+        assignment = check_assignment(set_assignment)
+        db = db_init()
+        stored_user = db.execute("SELECT * FROM users WHERE id IS :id", {'id': to_user_id}).fetchone()
+        if not stored_user['permission'] < session['user_permission']:
+            raise Exception('Permission Error')
+        points = added_points + stored_user['points']
+        db.execute("UPDATE users SET points = :points, assignment = :assignment WHERE id = :to_user_id",
+                   {'points': points, 'assignment': assignment, 'to_user_id': to_user_id})
+        db.commit()
+        return 'success'
+    except:
+        return 'fail'
 
 
 

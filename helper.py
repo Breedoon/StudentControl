@@ -27,15 +27,24 @@ def create_users_table(users):
     table['head'] = ["Name", "ID", "Type", "Points", "Current assignment"]
     table['rows'] = []
     for user in users:
-        type = get_user_type(user['permission'])
-        table['rows'].append([user['first_name'] + " " + user['last_name'], user['id'], type, user['points'], user['assignment']])
+        position = get_user_position(user['permission'])
+        table['rows'].append([user['first_name'] + " " + user['last_name'], user['id'], position, user['points'], user['assignment']])
     return render_template("table.html", table=table)
 
 
-def get_user_type(permission_level):
-    type = "Student"
+def get_user_position(permission_level):
+    position = "Student"
     if permission_level is 1:
-        type = 'Teacher'
+        position = 'Teacher'
     elif permission_level is 2:
-        type = "Admin"
-    return type
+        position = "Admin"
+    return position
+
+
+def check_assignment(assignment):
+    assignment = assignment.lower()
+    if assignment == "no" or "none" or '0' or 'no assignment' or 'free':
+        assignment = None
+    else:
+        assignment = assignment.capitalize()
+    return assignment
