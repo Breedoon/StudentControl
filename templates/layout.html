@@ -69,6 +69,14 @@
                         <p>Profile</p>
                     </a>
                 </li>
+{#                {% if session['user_permission'] > 0 %} TODO: check permission #}
+                    <li class={% block active_add_user %}{% endblock %}>
+                        <a href="{{ url_for('add_user') }}">
+                            <i class="ti-plus"></i>
+                            <p>Add New User</p>
+                        </a>
+                    </li>
+{#                {% endif %}#}
                 <li>
                     <a href="typography.html">
                         <i class="ti-text"></i>
@@ -93,7 +101,7 @@
                         <p>Notifications</p>
                     </a>
                 </li>
-				<li class="active-pro">
+                <li class="active-pro">
                     <a href="upgrade.html">
                         <i class="ti-export"></i>
                         <p>Upgrade to PRO</p>
@@ -207,7 +215,6 @@
 
 <!-- Paper Dashboard DEMO methods, don't include it in your project! -->
 <script src="../static/js/demo.js"></script>
-
 
 
 </html>

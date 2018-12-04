@@ -1,6 +1,6 @@
 import os
 from helper import apology, db_init, dict_factory, create_users_table, get_user_position, check_assignment
-from flask import Flask, redirect, render_template, request, session, url_for
+from flask import Flask, redirect, render_template, request, session, url_for, jsonify
 from flask_jsglue import JSGlue
 
 app = Flask(__name__)
@@ -84,19 +84,21 @@ def profile():
         try:
             old_user_id = int(request.form.get('old_user_id'))
             new_user_id = int(request.form.get('new_user_id'))
+            permission = int(request.form.get('permission'))
             first_name = request.form.get('first_name')
             last_name = request.form.get('last_name')
             db = db_init()
             stored_user = db.execute("SELECT * FROM users WHERE id IS :id", {'id': old_user_id}).fetchone()
-            if not stored_user['permission'] < session['user_permission']:
+            if not stored_user['permission'] < session['user_permission'] or permission >= session['user_permission']:
                 raise Exception('Permission Error')
-            db.execute("UPDATE users SET first_name = :first_name, last_name = :last_name, id = :new_user_id "
-                       "WHERE id = :old_user_id", {'first_name': first_name, 'last_name': last_name,
-                                                   'new_user_id': new_user_id, 'old_user_id': old_user_id})
+            db.execute("UPDATE users SET first_name = :first_name, last_name = :last_name, id = :new_user_id, "
+                       "permission = :permission WHERE id = :old_user_id",
+                       {'first_name': first_name, 'last_name': last_name,
+                        'new_user_id': new_user_id, 'old_user_id': old_user_id, 'permission': permission})
             db.commit()
-            return 'success'
+            return jsonify({'success': True, 'name': first_name + " " + last_name, 'position': get_user_position(permission)})
         except:
-            return 'fail'
+            return jsonify({'success': False})
 
     else:
         if not request.args.__contains__("id"):
@@ -129,11 +131,29 @@ def points():
         db.execute("UPDATE users SET points = :points, assignment = :assignment WHERE id = :to_user_id",
                    {'points': points, 'assignment': assignment, 'to_user_id': to_user_id})
         db.commit()
-        return 'success'
+        return jsonify({'success': True, 'points': points, 'assignment': str(assignment)})
     except:
-        return 'fail'
+        return jsonify({'success': False})
 
 
-
+@app.route('/add_user', methods=["GET", "POST"])
+def add_user():
+    if request.method == "GET":
+        return render_template('add_user.html')
+    else:
+        try:
+            new_user_id = request.form.get('id').strip()
+            first_name = request.form.get('first_name').strip()
+            last_name = request.form.get('last_name').strip()
+            if new_user_id.__len__() != 7 or first_name == "" or last_name == "":
+                raise Exception("Invalid data")
+            id = int(new_user_id)
+            db = db_init()
+            db.execute("INSERT into users (id, first_name, last_name) VALUES (:id, :first_name, :last_name)",
+                       {'id': id, 'first_name': first_name, 'last_name': last_name})
+            db.commit()
+            return jsonify({'success': True, 'profile_link': url_for('profile', id=new_user_id)})
+        except Exception as e:
+            return jsonify({'success': False})
 if __name__ == '__main__':
     app.run()

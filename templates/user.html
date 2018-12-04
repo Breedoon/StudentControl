@@ -23,18 +23,18 @@
         <div class="text-center">
             <div class="row">
                 <div class="col-md-3 col-md-offset-1">
-                    <h5> {{ user['position'] }} <br/>
-                        <small id="position_label">Position</small>
+                    <h5 id="position_label"> {{ user['position'] }} <br/>
+                        <small>Position</small>
                     </h5>
                 </div>
                 <div class="col-md-4">
-                    <h5> {{ user['points'] }} <br/>
-                        <small id="points_label">Points</small>
+                    <h5 id="points_label"> {{ user['points'] }} <br/>
+                        <small>Points</small>
                     </h5>
                 </div>
                 <div class="col-md-3">
-                    <h5>{{ user['assignment'] }}<br/>
-                        <small id="assignment_label">Assignment</small>
+                    <h5 id="assignment_label">{{ user['assignment'] }}<br/>
+                        <small>Assignment</small>
                     </h5>
                 </div>
             </div>
@@ -67,7 +67,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Title</label>
-                            <select id="type_select" class="form-control border-input" {{ disabled }}>
+                            <select id="position_select" class="form-control border-input" {{ disabled }}>
                                 <option {% if user['position'] == 'Student' %}selected="selected"{% endif %} value="0">Student</option>
                                 <option {% if user['position'] == 'Teacher' %}selected="selected"{% endif %} value="1">Teacher</option>
                                 <option {% if user['position'] == 'Admin' %}selected="selected"{% endif %} value="2">Admin</option>
@@ -93,7 +93,7 @@
                     </div>
                 </div>
                 <div class="text-center">
-                    <button onclick="change_profile({{ user['id'] }}, $('#user_id_input').val(), $('#first_name_input').val(), $('#last_name_input').val())"
+                    <button onclick="change_profile({{ user['id'] }}, $('#user_id_input').val(), $('#first_name_input').val(), $('#last_name_input').val(), $('#position_select').val())"
                             type="button" class="btn btn-info btn-fill btn-wd">Update Profile
                     </button>
                 </div>

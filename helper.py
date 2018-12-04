@@ -43,7 +43,7 @@ def get_user_position(permission_level):
 
 def check_assignment(assignment):
     assignment = assignment.lower()
-    if assignment == "no" or "none" or '0' or 'no assignment' or 'free':
+    if assignment == "no" or assignment == "none" or assignment == '0' or assignment == 'no assignment' or assignment == 'free':
         assignment = None
     else:
         assignment = assignment.capitalize()
