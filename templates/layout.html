@@ -6,7 +6,7 @@
     <link rel="icon" type="image/png" sizes="96x96" href="../static/img/favicon.png">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
 
-    <title> {% block title %} Student Control {% endblock %}</title>
+    <title> {% block title %}{% endblock %} — StudentControl</title>
 
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport'/>
     <meta name="viewport" content="width=device-width"/>
@@ -46,7 +46,7 @@
         <div class="sidebar-wrapper">
             <div class="logo">
                 <a href="{{ url_for('index') }}" class="simple-text">
-                    Student Control
+                    <b style="color: #EB5E28;">S</b>tudent<b style="color: #EB5E28;">C</b>ontrol
                 </a>
             </div>
 
@@ -57,54 +57,31 @@
                         <p>Dashboard</p>
                     </a>
                 </li>
-                <li class={% block active_search %}{% endblock %}>
-                    <a href="{{ url_for('search') }}">
-                        <i class="ti-search"></i>
-                        <p>Student Search</p>
-                    </a>
-                </li>
                 <li class={% block active_profile %}{% endblock %}>
                     <a href="{{ url_for('profile') }}">
                         <i class="ti-user"></i>
                         <p>Profile</p>
                     </a>
                 </li>
-{#                {% if session['user_permission'] > 0 %} TODO: check permission #}
+                {% if session['user_permission'] > 0 %}
+
+                    <li class={% block active_search %}{% endblock %}>
+                        <a href="{{ url_for('search') }}">
+                            <i class="ti-search"></i>
+                            <p>Student Search</p>
+                        </a>
+                    </li>
                     <li class={% block active_add_user %}{% endblock %}>
                         <a href="{{ url_for('add_user') }}">
                             <i class="ti-plus"></i>
                             <p>Add New User</p>
                         </a>
                     </li>
-{#                {% endif %}#}
-                <li>
-                    <a href="typography.html">
-                        <i class="ti-text"></i>
-                        <p>Typography</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="icons.html">
-                        <i class="ti-pencil-alt2"></i>
-                        <p>Icons</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="maps.html">
-                        <i class="ti-map"></i>
-                        <p>Maps</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="notifications.html">
-                        <i class="ti-bell"></i>
-                        <p>Notifications</p>
-                    </a>
-                </li>
+                {% endif %}
                 <li class="active-pro">
-                    <a href="upgrade.html">
-                        <i class="ti-export"></i>
-                        <p>Upgrade to PRO</p>
+                    <a href="{{ url_for('logout') }}">
+                        <i class="ti-share-alt"></i>
+                        <p>Log out</p>
                     </a>
                 </li>
             </ul>
@@ -115,44 +92,44 @@
         <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar bar1"></span>
-                        <span class="icon-bar bar2"></span>
-                        <span class="icon-bar bar3"></span>
-                    </button>
-                    <a class="navbar-brand" href="#">Template</a>
+{#                    <button type="button" class="navbar-toggle">#}
+{#                        <span class="sr-only">Toggle navigation</span>#}
+{#                        <span class="icon-bar bar1"></span>#}
+{#                        <span class="icon-bar bar2"></span>#}
+{#                        <span class="icon-bar bar3"></span>#}
+{#                    </button>#}
+                    <a class="navbar-brand" href="#">{% block navbar %}{% endblock %}</a>
                 </div>
                 <div class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav navbar-right">
-                        <li>
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="ti-panel"></i>
-                                <p>Stats</p>
-                            </a>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="ti-bell"></i>
-                                <p class="notification">5</p>
-                                <p>Notifications</p>
-                                <b class="caret"></b>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">Notification 1</a></li>
-                                <li><a href="#">Notification 2</a></li>
-                                <li><a href="#">Notification 3</a></li>
-                                <li><a href="#">Notification 4</a></li>
-                                <li><a href="#">Another notification</a></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <i class="ti-settings"></i>
-                                <p>Settings</p>
-                            </a>
-                        </li>
-                    </ul>
+                    {#                    <ul class="nav navbar-nav navbar-right">#}
+                    {#                        <li>#}
+                    {#                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">#}
+                    {#                                <i class="ti-panel"></i>#}
+                    {#                                <p>Stats</p>#}
+                    {#                            </a>#}
+                    {#                        </li>#}
+                    {#                        <li class="dropdown">#}
+                    {#                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">#}
+                    {#                                <i class="ti-bell"></i>#}
+                    {#                                <p class="notification">5</p>#}
+                    {#                                <p>Notifications</p>#}
+                    {#                                <b class="caret"></b>#}
+                    {#                            </a>#}
+                    {#                            <ul class="dropdown-menu">#}
+                    {#                                <li><a href="#">Notification 1</a></li>#}
+                    {#                                <li><a href="#">Notification 2</a></li>#}
+                    {#                                <li><a href="#">Notification 3</a></li>#}
+                    {#                                <li><a href="#">Notification 4</a></li>#}
+                    {#                                <li><a href="#">Another notification</a></li>#}
+                    {#                            </ul>#}
+                    {#                        </li>#}
+                    {#                        <li>#}
+                    {#                            <a href="#">#}
+                    {#                                <i class="ti-settings"></i>#}
+                    {#                                <p>Settings</p>#}
+                    {#                            </a>#}
+                    {#                        </li>#}
+                    {#                    </ul>#}
 
                 </div>
             </div>
@@ -168,26 +145,26 @@
         </div>
 
 
-        <footer class="footer">
-            <div class="container-fluid">
-                <nav class="pull-left">
-                    <ul>
-
-                        <li>
-                            <a href="#">
-                                Home
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-                <div class="copyright pull-right">
-                    &copy;
-                    <script>document.write(new Date().getFullYear())</script>
-                    , made with <i class="fa fa-heart heart"></i> by <a href="http://www.creative-tim.com">Creative
-                    Tim</a>
-                </div>
-            </div>
-        </footer>
+{#        <footer class="footer">#}
+{#            <div class="container-fluid">#}
+{#                <nav class="pull-left">#}
+{#                    <ul>#}
+{##}
+{#                        <li>#}
+{#                            <a href="#">#}
+{#                                Home#}
+{#                            </a>#}
+{#                        </li>#}
+{#                    </ul>#}
+{#                </nav>#}
+{#                <div class="copyright pull-right">#}
+{#                    &copy;#}
+{#                    <script>document.write(new Date().getFullYear())</script>#}
+{#                    , made with <i class="fa fa-heart heart"></i> by <a href="http://www.creative-tim.com">Creative#}
+{#                    Tim</a>#}
+{#                </div>#}
+{#            </div>#}
+{#        </footer>#}
 
     </div>
 </div>

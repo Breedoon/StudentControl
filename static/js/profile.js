@@ -54,6 +54,23 @@ function change_profile(old_id, new_id, first, last, position) {
         }
     })
 }
+function change_password(old_pass, new_pass) {
+    $.ajax({
+        url: Flask.url_for('change_password'),
+        data: {
+            "old_pass": old_pass,
+            "new_pass": new_pass
+        },
+        type: "POST",
+        success: function (data) {
+            if (data['success']) {
+                notify("Password changed", 'success');
+            } else {
+                notify("<b>Error</b> — cannot change the password", 'danger');
+            }
+        }
+    })
+}
 
 
 function update_points(add_points, set_assignment, id) {
@@ -66,7 +83,7 @@ function update_points(add_points, set_assignment, id) {
                 notify("Profile updated", 'success');
                 $('#assignment_label').html(data['assignment'] + '<br/><small>Assignment</small>');
                 $('#points_label').html(data['points'] + '<br/><small>Points</small>');
-
+                $('#points_input').val(0)
             } else {
                 notify("<b>Error</b> — cannot update points or assignment", 'danger');
             }

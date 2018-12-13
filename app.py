@@ -10,6 +10,8 @@ app.secret_key = os.urandom(24)
 
 @app.route('/')
 def index():
+    # session['user_id'] = 1000000  # TODO: REMOVE
+    # session['user_permission'] = 2  # TODO: REMOVE
     if not session.__contains__('user_id'):
         return redirect('/login')
     return redirect('/dashboard')
@@ -44,15 +46,28 @@ def login():
         return render_template('login.html')
 
 
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
+
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html')
+    if not session.__contains__('user_id'):
+        return redirect(url_for('index'))
+    return render_template('dashboard.html', user=db_init().execute("SELECT * FROM users WHERE id IS :id", {'id': session['user_id']}).fetchone())
 
 
 @app.route('/search', methods=["GET", "POST"])  # TODO: //Login required
 def search():
+    try:
+        if session['user_permission'] == 0:
+            return redirect(url_for('index'))
+    except:
+        return redirect(url_for('index'))
+
     if request.method == "POST":
-        session['user_permission'] = 2  # TODO: REMOVE
         db = db_init()
         if request.form.__contains__("user_id"):
             user_id = request.form.get("user_id")
@@ -78,10 +93,11 @@ def p404():
 
 @app.route('/profile', methods=["GET", "POST"])
 def profile():
-    session['user_id'] = 1000000  # TODO: REMOVE
-    session['user_permission'] = 2  # TODO: REMOVE
     if request.method == "POST":
         try:
+            if not session.__contains__('user_id'):
+                return jsonify({'success': False})
+
             old_user_id = int(request.form.get('old_user_id'))
             new_user_id = int(request.form.get('new_user_id'))
             permission = int(request.form.get('permission'))
@@ -101,6 +117,9 @@ def profile():
             return jsonify({'success': False})
 
     else:
+        if not session.__contains__('user_id'):
+            return redirect(url_for('index'))
+
         if not request.args.__contains__("id"):
             user_id = session['user_id']
         else:
@@ -114,10 +133,41 @@ def profile():
         return render_template("user.html", user=stored_user, disabled=disabled)
 
 
+@app.route('/add_user', methods=["GET", "POST"])
+def add_user():
+    try:
+        if session['user_permission'] == 0:
+            return jsonify({'success': False})
+    except:
+        return jsonify({'success': False})
+
+    if request.method == "GET":
+        return render_template('add_user.html')
+    else:
+        try:
+            new_user_id = request.form.get('id').strip()
+            first_name = request.form.get('first_name').strip()
+            last_name = request.form.get('last_name').strip()
+            if new_user_id.__len__() != 7 or first_name == "" or last_name == "":
+                raise Exception("Invalid data")
+            id = int(new_user_id)
+            db = db_init()
+            db.execute("INSERT into users (id, first_name, last_name) VALUES (:id, :first_name, :last_name)",
+                       {'id': id, 'first_name': first_name, 'last_name': last_name})
+            db.commit()
+            return jsonify({'success': True, 'profile_link': url_for('profile', id=new_user_id)})
+        except Exception as e:
+            return jsonify({'success': False})
+
+
 @app.route('/points', methods=["POST"])
 def points():
-    session['user_id'] = 1000000  # TODO: REMOVE
-    session['user_permission'] = 2  # TODO: REMOVE
+    try:
+        if session['user_permission'] == 0:
+            return jsonify({'success': False})
+    except:
+        return jsonify({'success': False})
+
     try:
         to_user_id = int(request.form.get('to_user'))
         added_points = int(request.form.get('added_points'))
@@ -136,24 +186,27 @@ def points():
         return jsonify({'success': False})
 
 
-@app.route('/add_user', methods=["GET", "POST"])
-def add_user():
-    if request.method == "GET":
-        return render_template('add_user.html')
-    else:
-        try:
-            new_user_id = request.form.get('id').strip()
-            first_name = request.form.get('first_name').strip()
-            last_name = request.form.get('last_name').strip()
-            if new_user_id.__len__() != 7 or first_name == "" or last_name == "":
-                raise Exception("Invalid data")
-            id = int(new_user_id)
-            db = db_init()
-            db.execute("INSERT into users (id, first_name, last_name) VALUES (:id, :first_name, :last_name)",
-                       {'id': id, 'first_name': first_name, 'last_name': last_name})
-            db.commit()
-            return jsonify({'success': True, 'profile_link': url_for('profile', id=new_user_id)})
-        except Exception as e:
-            return jsonify({'success': False})
+@app.route('/password', methods=["POST"])
+def change_password():
+    if not session.__contains__('user_id'):
+        return jsonify({'success': False})
+
+    try:
+        old_password = request.form.get('old_pass')
+        new_password = request.form.get('new_pass')
+        db = db_init()
+        stored_user = db.execute("SELECT * FROM users WHERE id IS :id", {'id': session['user_id']}).fetchone()
+        if stored_user['password'] != old_password:
+            raise Exception('Wrong Password')
+        if len(new_password) < 6:
+            raise Exception('Too Short Password')
+        db.execute("UPDATE users SET password = :new_password WHERE id = :user_id",
+                   {'new_password': new_password, 'user_id': session['user_id']})
+        db.commit()
+        return jsonify({'success': True})
+    except:
+        return jsonify({'success': False})
+
+
 if __name__ == '__main__':
     app.run()

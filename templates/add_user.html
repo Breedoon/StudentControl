@@ -12,7 +12,7 @@
                     <input id="id_input" name="id_input" type="text" placeholder="Student ID"
                            class="form-control input-md">
                 </div>
-                <button disabled="disabled" onclick="insert_user($('#id_input').val(), $('#first_name').val(), $('#last_name').val())"
+                <button disabled="disabled" onclick="insert_user($('#id_input').val(), $('#first_name').val(), $('#last_name').val())" {#TODO: fix#}
                         id="id_button" name="id_button"
                         class="btn btn-danger" style="margin-left: 1em; visibility: hidden;">Add User
                 </button>
@@ -37,3 +37,5 @@
     </div>
 {% endblock %}
 {% block active_add_user %}'active'{% endblock %}
+{% block title %}Add New User{% endblock %}
+{% block navbar %}Add New User{% endblock %}
